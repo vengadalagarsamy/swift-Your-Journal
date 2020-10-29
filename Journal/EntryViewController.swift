@@ -1,29 +1,65 @@
-//
-//  EntryViewController.swift
-//  Journal
-//
-//  Created by Vengad Alagarsamy on 29/10/2020.
-//
-
 import UIKit
 
-class EntryViewController: UIViewController {
-
+class EntryViewController: UIViewController, UITextViewDelegate {
+    
+    @IBOutlet weak var bottomBorderConstraint: NSLayoutConstraint!
+    @IBOutlet weak var entryTextView: UITextView!
+    @IBOutlet weak var datePicker: UIDatePicker!
+    
+    var entry: Entry?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        
+        if entry == nil {
+            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+                entry = Entry(context:context)
+                entry?.date = datePicker.date
+                entry?.text = "Today was ..."
+                entryTextView.becomeFirstResponder()
+            }
+        }
+        
+        entryTextView.text = entry?.text
+        if let dateToBeShown = entry?.date{
+            datePicker.date = dateToBeShown
+        }
+        entryTextView.delegate = self
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillDisappear(_ animated: Bool) {
+        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
-    */
-
+    
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            
+            bottomBorderConstraint.constant = keyboardHeight
+        }
+    }
+    
+    @IBAction func deleteEntry(_ sender: Any) {
+        if entry != nil {
+            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+                context.delete(entry!)
+                try? context.save()
+            }
+        }
+        navigationController?.popViewController(animated: true)
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        entry?.text = entryTextView.text
+        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+    }
+    
+    
+    @IBAction func datePickerChanged(_ sender: Any) {
+        entry?.date = datePicker.date
+        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+    }
 }

@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Journal-->
+        <!--Your Journal-->
         <scene sceneID="rof-yO-UGZ">
             <objects>
                 <tableViewController id="Z5k-Wb-wEb" customClass="EntriesTableViewController" customModule="Journal" customModuleProvider="target" sceneMemberID="viewController">
@@ -71,7 +71,7 @@
                             <outlet property="delegate" destination="Z5k-Wb-wEb" id="mJV-a9-Afi"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Journal" id="SfN-j1-wxc">
+                    <navigationItem key="navigationItem" title="Your Journal" id="SfN-j1-wxc">
                         <barButtonItem key="backBarButtonItem" title="Back" id="HZT-UJ-hTP"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="BSD-Fc-pvt">
                             <connections>
